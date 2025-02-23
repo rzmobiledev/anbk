@@ -1,0 +1,12 @@
+# Django
+django==3.2.25
+
+# Network & Utils
+requests==2.32.0
+
+# Cryptography & Security
+jwcrypto==1.5.5
+
+# Testing
+responses==0.23.3
+pytest==8.1.1

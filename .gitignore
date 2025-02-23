@@ -1,0 +1,9 @@
+.pytest_cache
+.python-version
+__Pycache__
+
+.env
+.venv
+.python-version
+static/admin/
+static/rest_framework/
