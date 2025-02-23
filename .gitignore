@@ -5,5 +5,4 @@ __Pycache__
 .env
 .venv
 .python-version
-static/admin/
-static/rest_framework/
+static/
