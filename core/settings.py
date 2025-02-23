@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     'core',
     'user',
     'api',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
 
 ]
 
@@ -128,4 +130,15 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'ANBK API',
+    'DESCRIPTION': 'API to retrieve personal information',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
 }

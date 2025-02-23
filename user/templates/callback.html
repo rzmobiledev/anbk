@@ -1,15 +1,22 @@
 {% extends 'main.html' %} {% block content %}
 <div class="callback_container">
-  <h1>Personal Detail</h1>
+  <h1 id="h1"></h1>
   <div class="accordion" id="accordionExample"></div>
 </div>
 {% endblock %} {% block javascript %}
+
 <script type="text/javascript">
   window.onload = async function () {
     const auth_code = '{{ auth_code }}'
+    const title = document.getElementById('h1')
+    title.textContent = 'Data is being loaded. Please wait...'
 
     response = await sendMyInfoCallback(auth_code)
-    console.log(response)
+    if (Object.keys(response).length !== 0) {
+      title.textContent = 'Personal Detail'
+      updateDomElement(response)
+    }
   }
 </script>
+
 {% endblock %}

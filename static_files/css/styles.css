@@ -11,6 +11,9 @@
 :root {
   --main-color: #00879e;
   --second-color: #07aac6;
+  --bs-accordion-active-color: #6ea8fe;
+  --bs-accordion-active-bg: #031633;
+  --bs-accordion-border-color: #495057;
 }
 
 html,
@@ -23,7 +26,6 @@ body {
   font-family: 'Poppins';
   height: 100%;
   width: 100%;
-  overflow: hidden;
   display: flex;
   min-height: 100vh;
 }
@@ -31,8 +33,10 @@ body {
 .container {
   margin: auto;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 8px;
 }
 
 .form_parent {
@@ -67,4 +71,11 @@ small {
 .callback_container {
   width: 100%;
   height: 100%;
+}
+
+.accordion-button:not(.collapsed) {
+  color: #fff;
+  background-color: #031633;
+  box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0
+    var(--bs-accordion-border-color);
 }
