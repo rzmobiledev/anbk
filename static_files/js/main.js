@@ -1,7 +1,7 @@
 
 async function getMyInfo(){
     try{
-        let response = await fetch('http://127.0.0.1:3001/api/')
+        let response = await fetch('http://127.0.0.1:3001/api/getmyinfo/')
         
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);

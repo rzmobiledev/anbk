@@ -7,9 +7,9 @@ from . import config
 SECRET_KEY = config.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config.DEBUG
+DEBUG: bool = config.DEBUG
 
-CORS_ALLOW_ALL_ORIGINS: bool = config.DEBUG
+CORS_ALLOW_ALL_ORIGINS: bool = True
 
 if DEBUG:
     ALLOWED_HOSTS = ['*']
@@ -25,18 +25,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
     'corsheaders',
     'rest_framework',
     'core',
     'user',
     'api',
-    'drf_spectacular',
-    'drf_spectacular_sidecar',
 
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -66,11 +66,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = config.POSTGRES
+if DEBUG:
+    DATABASES = config.SQLITE
+else:
+    DATABASES = config.POSTGRES
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        },
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -130,15 +137,15 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
 }
 
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'ANBK API',
-    'DESCRIPTION': 'API to retrieve personal information',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    'SWAGGER_UI_DIST': 'SIDECAR',
-    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
-    'REDOC_DIST': 'SIDECAR',
+SWAGGER_SETTINGS = {
+    'DEFAULT_INFO': 'import.path.to.urls.api_info',
+    "DEFAULT_MODEL_RENDERING": "example",
+    "LOGOUT_URL": "/account/logout/"
+
 }
+
+LOGIN_URL = '/admin/login/'
+LOGOUT_REDIRECT_URL = '/account/logout/'

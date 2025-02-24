@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import View
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+from django.conf import settings
 
 
 class HomePage(View):
@@ -18,3 +21,8 @@ class CallbackPage(View):
         }
 
         return render(request, 'callback.html', context)
+
+
+def logout_view(request):
+    logout(request)
+    return redirect(f"{settings.LOGIN_URL}?next={request.path}")

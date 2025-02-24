@@ -6,3 +6,4 @@ __Pycache__
 .venv
 .python-version
 static/
+db.sqlite3

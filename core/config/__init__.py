@@ -1,5 +1,4 @@
 import os
-from xmlrpc.client import Boolean
 from dotenv import dotenv_values
 from pathlib import Path
 from django.utils.crypto import get_random_string
@@ -7,7 +6,7 @@ from django.utils.crypto import get_random_string
 env: dict = dotenv_values(".env")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-DEBUG = Boolean(env.get('DEBUG', True))
+DEBUG = bool(env.get('DEBUG'))
 SECRET_KEY = env.get('DJANGO_SECRET_KEY')
 ALLOWED_HOSTS: list = str(env.get('ALLOWED_HOSTS')).split(',')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
