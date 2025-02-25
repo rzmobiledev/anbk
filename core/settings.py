@@ -138,6 +138,8 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
 
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler'
+
 }
 
 SWAGGER_SETTINGS = {

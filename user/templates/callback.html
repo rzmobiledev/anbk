@@ -11,7 +11,7 @@
     const title = document.getElementById('h1')
     title.textContent = 'Data is being loaded. Please wait...'
 
-    response = await sendMyInfoCallback(auth_code)
+    response = await sendMyInfoPayload(auth_code)
     if (Object.keys(response).length !== 0) {
       title.textContent = 'Personal Detail'
       updateDomElement(response)

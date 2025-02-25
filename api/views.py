@@ -1,14 +1,14 @@
+from requests import HTTPError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-
 from core.config import MYINFO_CLIENT
 from myinfo.client import MyInfoPersonalClientV4
 
 
-class GetMyPersonalInfo(APIView):
+class GetMyInfoURL(APIView):
     get_response_schema_dict = {
         "200": openapi.Response(
             description="Return a json response with with a valid url params from test.api.myinfo.gov.sg",
@@ -33,10 +33,12 @@ class GetMyPersonalInfo(APIView):
         callback_url = MYINFO_CLIENT.get('CALLBACK_URL')
         client = MyInfoPersonalClientV4()
         response = client.get_authorise_url(oauth_state, callback_url)
-        return Response({'data': response}, status=status.HTTP_200_OK)
+        if (response):
+            return Response({'data': response}, status=status.HTTP_200_OK)
+        return Response({'error': 'Unauthorized for url: https://test.api.myinfo.gov.sg/com/v4/token'}, status=401)
 
 
-class MyPersonalInfoCallback(APIView):
+class SendMyInfoPayload(APIView):
 
     post_response_schema_dict = {
         "200": openapi.Response(
@@ -626,7 +628,7 @@ class MyPersonalInfoCallback(APIView):
                                     type=openapi.IN_PATH)
     callback_url = openapi.Parameter('callback_url', openapi.IN_PATH,
                                      description="callback url",
-                                     type=openapi.IN_PATH, default='http://127.0.01:3001/callback')
+                                     type=openapi.IN_PATH, default='http://127.0.0.1:3001/callback')
 
     @swagger_auto_schema(
         operation_description="Send all required params from callback page after receiving a response from api/getmyinfo/ api endpoint.",
@@ -634,10 +636,13 @@ class MyPersonalInfoCallback(APIView):
         manual_parameters=[auth_code, oauth_state, callback_url]
     )
     def post(self, request, *args, **kwargs):
-        data = request.data
-        auth_code = data.get('auth_code')
+        try:
+            data = request.data
+            auth_code = data.get('auth_code')
 
-        oauth_state = MYINFO_CLIENT.get('oauth_state')
-        callback_url = MYINFO_CLIENT.get('CALLBACK_URL')
-        person_data = MyInfoPersonalClientV4().retrieve_resource(auth_code, oauth_state, callback_url)
-        return Response(person_data, status=status.HTTP_200_OK)
+            oauth_state = MYINFO_CLIENT.get('oauth_state')
+            callback_url = MYINFO_CLIENT.get('CALLBACK_URL')
+            person_data = MyInfoPersonalClientV4().retrieve_resource(auth_code, oauth_state, callback_url)
+            return Response(person_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(str(e), status=401)
