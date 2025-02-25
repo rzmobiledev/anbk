@@ -4,6 +4,5 @@ __Pycache__
 
 .env
 .venv
-.python-version
 static/
 db.sqlite3
