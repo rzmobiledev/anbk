@@ -132,6 +132,9 @@ To demonstrate Front End, kindly access to `http://127.0.0.1:3001`.
 
 ![image](https://i.imghippo.com/files/MYXO8469pIQ.png)
 
+#### Note
+If you run demo and page in `https://test.api.myinfo.gov.sg` shows `404`, please wait for 2 to 3 mins and then go back to the front page and try again. 
+
 ## Report
 
 In case you find error, kindly email me ASAP rzmobiledev@gmail.com
