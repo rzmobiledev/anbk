@@ -58,11 +58,17 @@ pytest
 Make migration (Optional)
 
 ```bash
-python ./manage.py makemigrations
-python ./manage.py migrate
+python manage.py makemigrations
+python manage.py migrate
 ```
 
-Start the server
+Run collectstatic
+
+```bash
+python manage.py collectstatic
+```
+
+Start the server. Notice the `port 3001` or it won't work.
 
 ```bash
 python manage.py runserver 3001
