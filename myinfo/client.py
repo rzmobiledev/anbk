@@ -182,11 +182,11 @@ class MyInfoPersonalClientV4(MyInfoClient):
         )
         return resp
 
-    def retrieve_resource(self, auth_code: str, state: str, callback_url: str) -> dict:
+    def retrieve_resource(self, auth_code: str, oauth_state: str, callback_url: str) -> dict:
         session_ephemeral_keypair = generate_ephemeral_session_keypair()
         access_token_resp = self.get_access_token(
             auth_code=auth_code,
-            state=state,
+            state=oauth_state,
             callback_url=callback_url,
             session_ephemeral_keypair=session_ephemeral_keypair,
         )

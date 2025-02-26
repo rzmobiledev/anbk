@@ -1,7 +1,6 @@
 import os
 from dotenv import dotenv_values
 from pathlib import Path
-from django.utils.crypto import get_random_string
 
 env: dict = dotenv_values(".env")
 
@@ -12,6 +11,7 @@ ALLOWED_HOSTS: list = str(env.get('ALLOWED_HOSTS')).split(',')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = os.path.join(BASE_DIR, 'static_files')
+CALLBACK_URL = env.get('CALLBACK_URL')
 
 POSTGRES: dict = {
     'default': {
@@ -30,9 +30,4 @@ SQLITE: dict = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-}
-
-MYINFO_CLIENT: dict = {
-    'oauth_state': get_random_string(length=16),
-    'CALLBACK_URL': env.get('CALLBACK_URL')
 }

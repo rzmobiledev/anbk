@@ -1,7 +1,7 @@
 
 async function getMyInfoUrl(){
     try{
-        let response = await fetch('http://127.0.0.1:3001/api/getmyinfo_url/')
+        let response = await fetch('http://127.0.0.1:3001/api/myinfo/');
         
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
@@ -16,7 +16,7 @@ async function getMyInfoUrl(){
 
 async function sendMyInfoPayload(auth_code){
     try{
-        let response = await fetch('http://127.0.0.1:3001/api/sendmyinfo_payload/', {
+        let response = await fetch('http://127.0.0.1:3001/api/myinfo/', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json, text/plain, */*',

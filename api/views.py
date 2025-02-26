@@ -1,14 +1,21 @@
-from requests import HTTPError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from core.config import MYINFO_CLIENT
 from myinfo.client import MyInfoPersonalClientV4
+from core.utils import get_random_string, OauthStateCallback
+from core.config import CALLBACK_URL
+from api.serializers import OauthStateCallbackSerializer
 
 
-class GetMyInfoURL(APIView):
+class MyInfo(APIView):
+
+    oauth_state = get_random_string()
+    callback_url = CALLBACK_URL
+    osc = OauthStateCallback(oauth_state=oauth_state, callback_url=callback_url)
+    serializer = OauthStateCallbackSerializer(osc)
+
     get_response_schema_dict = {
         "200": openapi.Response(
             description="Return a json response with with a valid url params from test.api.myinfo.gov.sg",
@@ -18,27 +25,22 @@ class GetMyInfoURL(APIView):
                 }
             }
         ),
-        "404": openapi.Response(
-            description="Response 404 from test.api.myinfo.gov.sg. If you receive this, please wait for another 2(two) mins, and back access this api endpoint.",
+        "400": openapi.Response(
+            description="Error Response 400 Bad Request",
             examples={"application/json": {
-                "data": "Page not found"
+                "message": "400 Client Error: Bad Request for url: https://test.api.myinfo.gov.sg/com/v4/token"
             }}
-
-        )
+        ),
     }
 
     @swagger_auto_schema(operation_description="Retrieve a URL from https://test.api.myinfo.gov.sg with required params. Client App should open this response and access the page and return to callback page", responses=get_response_schema_dict)
     def get(self, request):
-        oauth_state = MYINFO_CLIENT.get('oauth_state')
-        callback_url = MYINFO_CLIENT.get('CALLBACK_URL')
-        client = MyInfoPersonalClientV4()
-        response = client.get_authorise_url(oauth_state, callback_url)
-        if (response):
+        try:
+            client = MyInfoPersonalClientV4()
+            response = client.get_authorise_url(**self.serializer.data)
             return Response({'data': response}, status=status.HTTP_200_OK)
-        return Response({'error': 'Unauthorized for url: https://test.api.myinfo.gov.sg/com/v4/token'}, status=401)
-
-
-class SendMyInfoPayload(APIView):
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     post_response_schema_dict = {
         "200": openapi.Response(
@@ -617,7 +619,19 @@ class SendMyInfoPayload(APIView):
                     }
                 },
             }
-        )
+        ),
+        "400": openapi.Response(
+            description="Error Response 400 Bad Request",
+            examples={"application/json": {
+                "message": "400 Client Error: Bad Request for url: https://test.api.myinfo.gov.sg/com/v4/token"
+            }}
+        ),
+        "401": openapi.Response(
+            description="Error Response 401 Unauthorized",
+            examples={"application/json": {
+                "message": "401 Client Error: Unauthorized from url: https://test.api.myinfo.gov.sg/com/v4/token"
+            }}
+        ),
     }
 
     auth_code = openapi.Parameter('auth_code', openapi.IN_PATH,
@@ -639,10 +653,9 @@ class SendMyInfoPayload(APIView):
         try:
             data = request.data
             auth_code = data.get('auth_code')
-
-            oauth_state = MYINFO_CLIENT.get('oauth_state')
-            callback_url = MYINFO_CLIENT.get('CALLBACK_URL')
-            person_data = MyInfoPersonalClientV4().retrieve_resource(auth_code, oauth_state, callback_url)
-            return Response(person_data, status=status.HTTP_200_OK)
+            if not auth_code:
+                return Response({'message': 'Invalid auth code'}, status=status.HTTP_400_BAD_REQUEST)
+            myInfo = MyInfoPersonalClientV4().retrieve_resource(auth_code, **self.serializer.data)
+            return Response(myInfo, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(str(e), status=401)
+            return Response({'message': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
